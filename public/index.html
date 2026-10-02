@@ -9,11 +9,26 @@
 <div class="card">
 <button id="themeBtn" class="theme-btn">🌙</button>
 <h1>My Habit Tracker</h1>
+
+<div id="authView" class="hidden">
+<p>Log in or create an account.</p>
+<input type="text" id="usernameInput" placeholder="Username">
+<input type="password" id="passwordInput" placeholder="Password">
+<div class="auth-buttons">
+<button id="loginBtn">Log in</button>
+<button id="signupBtn">Sign up</button>
+</div>
+<p id="authMessage" class="auth-message"></p>
+</div>
+
+<div id="appView" class="hidden">
+<p class="whoami">Hi, <span id="userName"></span> · <button id="logoutBtn" class="link-btn">Log out</button></p>
 <p>Build good habits, one day at a time.</p>
 <input type="text" id="habitInput" placeholder="Type a habit">
 <button id="addBtn">Add Habit</button>
 <p id="summary" class="summary"></p>
 <ul id="habitList"></ul>
+</div>
 </div>
 <script src="script.js"></script>
 </body>

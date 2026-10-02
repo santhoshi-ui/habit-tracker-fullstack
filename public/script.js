@@ -3,6 +3,15 @@ const button = document.getElementById("addBtn");
 const list = document.getElementById("habitList");
 const summary = document.getElementById("summary");
 const themeBtn = document.getElementById("themeBtn");
+const authView = document.getElementById("authView");
+const appView = document.getElementById("appView");
+const usernameInput = document.getElementById("usernameInput");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const authMessage = document.getElementById("authMessage");
+const userName = document.getElementById("userName");
+const logoutBtn = document.getElementById("logoutBtn");
 
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
@@ -38,8 +47,65 @@ function getStreak(dates) {
   return streak;
 }
 
+function showApp(username) {
+  userName.textContent = username;
+  authView.classList.add("hidden");
+  appView.classList.remove("hidden");
+  loadHabits();
+}
+
+function showAuth() {
+  habits = [];
+  appView.classList.add("hidden");
+  authView.classList.remove("hidden");
+  passwordInput.value = "";
+}
+
+async function sendAuth(path) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: usernameInput.value,
+      password: passwordInput.value
+    })
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    authMessage.textContent = data.error;
+    return;
+  }
+  authMessage.textContent = "";
+  usernameInput.value = "";
+  passwordInput.value = "";
+  showApp(data.username);
+}
+
+loginBtn.addEventListener("click", function () {
+  sendAuth("/api/login");
+});
+
+signupBtn.addEventListener("click", function () {
+  sendAuth("/api/signup");
+});
+
+passwordInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    sendAuth("/api/login");
+  }
+});
+
+logoutBtn.addEventListener("click", async function () {
+  await fetch("/api/logout", { method: "POST" });
+  showAuth();
+});
+
 async function loadHabits() {
   const response = await fetch("/api/habits");
+  if (!response.ok) {
+    showAuth();
+    return;
+  }
   habits = await response.json();
   render();
 }
@@ -120,4 +186,14 @@ button.addEventListener("click", async function () {
   loadHabits();
 });
 
-loadHabits();
+async function start() {
+  const response = await fetch("/api/me");
+  if (response.ok) {
+    const data = await response.json();
+    showApp(data.username);
+  } else {
+    showAuth();
+  }
+}
+
+start();
