@@ -2,16 +2,10 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
+app.use(express.static("public"));
 
-let habits = [
-  { id: 1, text: "Drink water", dates: [] },
-  { id: 2, text: "Read 10 pages", dates: [] }
-];
-let nextId = 3;
-
-app.get("/", function (req, res) {
-  res.send("Hello from the kitchen!");
-});
+let habits = [];
+let nextId = 1;
 
 app.get("/api/habits", function (req, res) {
   res.json(habits);
